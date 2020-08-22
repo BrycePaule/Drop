@@ -9,6 +9,7 @@ public class InputManager : MonoBehaviour
     public Vector2 PlayerMoveAxis;
 
     private PlayerInputActions _input;
+    private GameEventManager _gameEventManager;
 
     #region Singleton
     public static InputManager Instance
@@ -31,9 +32,11 @@ public class InputManager : MonoBehaviour
     private void Awake()
     {
         _input = new PlayerInputActions();
+        _gameEventManager = GameEventManager.Instance;
 
         _input.Movement.Move.performed += ctx => OnPlayerMove(ctx.ReadValue<Vector2>());
         _input.Movement.Move.canceled += ctx => OnPlayerStopMove();
+        _input.Movement.Jump.performed += ctx => OnPlayerJump();
     }
 
     private void OnEnable()
@@ -49,5 +52,10 @@ public class InputManager : MonoBehaviour
     private void OnPlayerStopMove()
     {
         PlayerMoveAxis = Vector2.zero;
+    }
+
+    private void OnPlayerJump()
+    {
+        _gameEventManager.OnJumpPress();
     }
 }
